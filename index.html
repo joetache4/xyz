@@ -1,0 +1,130 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<script src="bin.js"></script>
+	<script>
+		function checkInput() {
+			input = document.getElementById("input").value
+			if (input) {
+				acceptInput(input)
+			} else {
+				clearTB()
+			}
+		}
+		function acceptInput(input) {
+			hidden = "fc83"
+			sha = SHA256(input)
+			key = XOR(hidden, sha)
+			document.getElementById("output").style.visibility = "visible"
+			document.getElementById("copy-button").style.visibility = "visible"
+			document.getElementById("output-text").innerHTML = key
+			if (getUrlParam("debug")) {
+				debugInfo()
+			}		
+		}
+		function debugInfo() {
+			document.getElementById("debug").style.visibility = "visible"
+			document.getElementById("debug-text").innerHTML = "SHA256: " + sha
+			if (LuhnAlgorithm(key)) {
+				document.getElementById("debug-text").innerHTML += "<br />Valid Key"
+			} else {
+				document.getElementById("debug-text").innerHTML += "<br />Invalid Key"
+			}
+		}
+		function clearTB() {
+			document.getElementById("input").value = ""
+			document.getElementById("input").style.color = "#432"
+			document.getElementById("input").style.fontStyle = "normal"
+			document.getElementById("output").style.visibility = "hidden"
+			document.getElementById("debug").style.visibility = "hidden"
+			document.getElementById("copy-button").innerHTML = "copy"
+			document.getElementById("copy-button").style.visibility = "hidden"
+		}
+		function copyOutput() {
+			navigator.clipboard.writeText(document.getElementById("output-text").innerHTML);
+			document.getElementById("copy-button").innerHTML = "✔"
+		}
+	</script>
+	<style>
+		body {
+			background-image: url("pooch.jpg");
+			background-position: center;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+			background-size: cover;
+		}
+		.content {
+			width: 500px;
+			height: 60px;
+			padding: 30px 50px 50px;
+			margin: 300px auto 0;
+			text-align: center;
+			background-color: rgba(255,255,240,0.5);
+			border: 1px solid rgba(245,245,230,0.8);
+			border-radius: 8px;
+		}
+		input {
+			width: 500px;
+			font-size: 1.3em;
+			text-align: center;
+			font-style: italic;
+			color: #666;
+		}
+		input:focus {
+			outline: none;
+			box-shadow: 0 0 10px rgba(245,245,230,0.8);
+		}
+		#output {
+			display: table;
+			table-layout: fixed;
+			width: 100%;
+			color: #432;
+			visbility: hidden;
+		}
+		#output span {
+			display: table-cell;
+		}
+		#output-text {
+			font-size: 1.6em;
+			font-family: monospace;
+			font-weight: bold;
+		}
+		#copy-button {
+			width: 80px;
+			min-height: 40px;
+			background: #f6e8ca;
+			padding: 3px 8px 6px;
+			border-radius: 16px;
+			border: 1px solid #c0b9af;
+			font-size: 1.3em;
+			color: #432;
+			text-shadow: 0 0 4px #FFF;
+			visibility: hidden;
+		}
+		#copy-button:hover {
+			background: #fffadf;
+		}
+		#debug-text {
+			font-family: monospace;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="content">
+		<form>
+			<input id="input" type="text" oninput="checkInput()" onfocus="clearTB()" value="Type Here..." autocomplete="off" />
+		</form>
+		
+		<div id="output">
+			<span id="output-text"></span>
+			<span><button id="copy-button" onclick="copyOutput()" title="copy to clipboard">copy</button></span>
+		</div>
+	</div>
+		
+	<div id="debug">
+		<span id="debug-text"></span>
+	</div>
+		
+</body>
+</html>
